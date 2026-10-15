@@ -4,10 +4,10 @@ import streamlit as st
 
 # Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="Tiệm Trà Nhỏ - Boba Game", page_icon="🧋", layout="centered"
+    page_title="Tiệm Trà Nhỏ - Boba Game Layout", page_icon="🧋", layout="centered"
 )
 
-# ----------------- CSS GIAO DIỆN GAME MOBILE -----------------
+# ----------------- TÙY CHỈNH CSS DẠNG LƯỚI GAME MOBILE -----------------
 st.markdown(
     """
     <style>
@@ -21,9 +21,9 @@ st.markdown(
         border-radius: 12px;
         font-weight: bold;
         font-size: 15px;
+        text-align: center;
         box-shadow: 0 3px 5px rgba(0,0,0,0.06);
         margin-bottom: 12px;
-        text-align: center;
     }
     .customer-bubble {
         background-color: #ffffff;
@@ -36,12 +36,19 @@ st.markdown(
     .section-title {
         background-color: #e5989b;
         color: white;
-        padding: 5px 10px;
+        padding: 6px 12px;
         border-radius: 8px;
         font-size: 14px;
         font-weight: bold;
-        margin-top: 12px;
-        margin-bottom: 8px;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    /* Khung lưới topping */
+    .topping-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
     }
     .stButton>button {
         background-color: #e5989b;
@@ -123,22 +130,27 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------- 3. KHU VỰC PHA CHẾ -----------------
+# ----------------- 3. KHU VỰC VÒI TRÀ & SIZE -----------------
 st.markdown(
-    '<div class="section-title">🧋 1. CHỌN VÒI TRÀ & SIZE</div>',
+    '<div class="section-title">🧋 1. HỆ THỐNG VÒI TRÀ & CHỌN SIZE</div>',
     unsafe_allow_html=True,
 )
-selected_tea = st.selectbox(
-    "Vòi trà:", ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong"]
-)
-selected_size = st.selectbox("Kích thước ly:", ["Size M", "Size L"])
+col_t1, col_t2 = st.columns(2)
+with col_t1:
+  selected_tea = st.selectbox(
+      "Chọn vòi trà:", ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong"]
+  )
+with col_t2:
+  selected_size = st.selectbox("Chọn size ly:", ["Size M", "Size L"])
 
+# ----------------- 4. KHAY TOPPING (DẠNG LƯỚI TRỰC QUAN) -----------------
 st.markdown(
-    '<div class="section-title">🍮 2. CHỌN TOPPING</div>',
+    '<div class="section-title">🍮 2. CHỌN KHAY TOPPING</div>',
     unsafe_allow_html=True,
 )
-selected_topping = st.selectbox(
-    "Topping:",
+
+selected_topping = st.radio(
+    "Danh mục các khay topping:",
     [
         "Trân châu đen",
         "Trân châu hoàng kim",
@@ -146,21 +158,26 @@ selected_topping = st.selectbox(
         "Thạch trái cây",
         "Pudding trứng",
     ],
+    horizontal=True,
 )
 
+# ----------------- 5. ĐƯỜNG & ĐÁ -----------------
 st.markdown(
-    '<div class="section-title">🥛 3. ĐƯỜNG & ĐÁ</div>',
+    '<div class="section-title">🥛 3. ĐƯỜNG, ĐÁ & FOAM</div>',
     unsafe_allow_html=True,
 )
-selected_sugar = st.selectbox(
-    "Mức đường:", ["0% đường", "50% đường", "100% đường"]
-)
-selected_ice = st.selectbox("Mức đá:", ["Không đá", "Ít đá", "Đá bình thường"])
+col_s1, col_s2 = st.columns(2)
+with col_s1:
+  selected_sugar = st.selectbox(
+      "Mức đường:", ["0% đường", "50% đường", "100% đường"]
+  )
+with col_s2:
+  selected_ice = st.selectbox("Mức đá:", ["Không đá", "Ít đá", "Đá bình thường"])
 
 st.write("")
 
-# ----------------- 4. NÚT GIAO HÀNG -----------------
-if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ"):
+# ----------------- 6. NÚT GIAO HÀNG -----------------
+if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH"):
   if (
       selected_tea == cust["tea"]
       and selected_size == cust["size"]
@@ -170,12 +187,12 @@ if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ"):
   ):
     earned = cust["price"]
     st.session_state.money += earned
-    st.success(f"🎉 Khách rất thích và thưởng cho quán {earned:,.0f}đ!")
+    st.success(f"🎉 Khách thưởng {earned:,.0f}đ vì pha cực kỳ chuẩn vị!")
     time.sleep(0.5)
     st.session_state.current_customer = None
     st.rerun()
   else:
-    st.error("❌ Pha chưa đúng ý khách rồi! Khách bỏ đi...")
+    st.error("❌ Pha chưa đúng ý khách rồi! Khách buồn phiền bỏ đi...")
     st.session_state.reputation = round(
         max(1.0, st.session_state.reputation - 0.1), 1
     )
