@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="Tiệm Trà Nhỏ - Boba Master", page_icon="🧋", layout="centered"
 )
 
-# ----------------- CSS GIAO DIỆN GAME MOBILE CHI TIẾT -----------------
+# ----------------- CSS GIAO DIỆN GAME MOBILE MÔ PHỎNG -----------------
 st.markdown(
     """
     <style>
@@ -16,7 +16,6 @@ st.markdown(
         color: #4a3b32;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    /* Thanh trạng thái game trên cùng */
     .game-header {
         background: linear-gradient(135deg, #ff9aa2, #ffb7b2);
         padding: 10px 15px;
@@ -30,7 +29,6 @@ st.markdown(
         box-shadow: 0 4px 8px rgba(255, 154, 162, 0.3);
         margin-bottom: 12px;
     }
-    /* Bong bóng order của khách */
     .customer-bubble {
         background-color: #ffffff;
         border: 3px solid #ff9aa2;
@@ -39,7 +37,6 @@ st.markdown(
         margin-bottom: 15px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-    /* Khu vực trạm pha chế */
     .station-box {
         background-color: #fffaf5;
         border: 2px solid #e5989b;
@@ -55,7 +52,6 @@ st.markdown(
         margin-bottom: 8px;
         text-transform: uppercase;
     }
-    /* Nút bấm giao hàng */
     .stButton>button {
         background: linear-gradient(135deg, #e5989b, #b5838d);
         color: white;
@@ -77,7 +73,7 @@ st.markdown(
 
 # ----------------- KHỞI TẠO TRẠNG THÁI GAME -----------------
 if "money" not in st.session_state:
-  st.session_state.money = 856800  # 856,8k
+  st.session_state.money = 856800
 if "day" not in st.session_state:
   st.session_state.day = 28
 if "reputation" not in st.session_state:
@@ -86,24 +82,26 @@ if "current_customer" not in st.session_state:
   st.session_state.current_customer = None
 
 
-# Hàm tạo đơn order ngẫu nhiên chuẩn game
+# Hàm tạo đơn order ngẫu nhiên
 def generate_order():
   customers = ["Bé Na 👧", "Minh Quân 👦", "Hà An 👩", "Gia Hân 🌸", "Tuấn Khải ☕"]
   sizes = ["Size M", "Size L"]
   teas = ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong", "Trà thái"]
+
+  # 12 loại topping tương ứng với 12 ô lưới trong ảnh
   toppings = [
       "Trân châu đen",
-      "Trân châu hoàng kim",
-      "Thạch trân châu sợi",
-      "Thạch trái cây hồng",
-      "Thạch trắng nhỏ",
       "Thạch matcha",
+      "Đá viên muối",
+      "Pudding trứng",
+      "Thạch trắng nhỏ",
+      "Thạch trái cây hồng",
       "Thạch trái cây hỗn hợp",
       "Thạch đen",
       "Thạch cacao",
-      "Trân châu vàng",
-      "Pudding trứng",
+      "Trân châu hoàng kim",
       "Thạch phô mai",
+      "Thạch dừa",
   ]
   foams = ["Không", "Foam cheese", "Foam matcha", "Foam muối", "Foam ube"]
   sugars = ["0% đường", "50% đường", "100% đường"]
@@ -124,7 +122,7 @@ def generate_order():
 if st.session_state.current_customer is None:
   generate_order()
 
-# ----------------- 1. THANH TRẠNG THÁI (HEADER) -----------------
+# ----------------- 1. THANH TRẠNG THÁI -----------------
 cust = st.session_state.current_customer
 st.markdown(
     f"""
@@ -151,7 +149,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------- 3. TRẠM 1: QUẦY VÒI TRÀ & CỐC -----------------
+# ----------------- 3. TRẠM 1: VÒI TRÀ & CỐC -----------------
 st.markdown(
     """
 <div class="station-box">
@@ -167,36 +165,39 @@ with col_v1:
       ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong", "Trà thái"],
   )
 with col_v2:
-  selected_size = st.selectbox("Chọn kích thước ly (Cốc M / L):", ["Size M", "Size L"])
+  selected_size = st.selectbox("Chọn kích thước ly:", ["Size M", "Size L"])
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ----------------- 4. TRẠM 2: KHAY TOPPING (12 Ô LƯỚI) -----------------
+# ----------------- 4. TRẠM 2: 12 Ô LƯỚI KHAY TOPPING -----------------
 st.markdown(
     """
 <div class="station-box">
-    <div class="station-title">🍮 Trạm Khay Topping (12 ô lưới)</div>
+    <div class="station-title">🍮 Trạm Khay Topping (12 Ô Lưới)</div>
 """,
     unsafe_allow_html=True,
 )
 
-selected_topping = st.selectbox(
-    "Chọn loại topping trong khay:",
-    [
-        "Trân châu đen",
-        "Trân châu hoàng kim",
-        "Thạch trân châu sợi",
-        "Thạch trái cây hồng",
-        "Thạch trắng nhỏ",
-        "Thạch matcha",
-        "Thạch trái cây hỗn hợp",
-        "Thạch đen",
-        "Thạch cacao",
-        "Trân châu vàng",
-        "Pudding trứng",
-        "Thạch phô mai",
-    ],
-)
+# Chia 12 ô topping thành 3 hàng (mỗi hàng 4 ô) cho trực quan y hệt game
+t_col1, t_col2, t_col3, t_col4 = st.columns(4)
+
+topping_options = [
+    "Trân châu đen",
+    "Thạch matcha",
+    "Đá viên muối",
+    "Pudding trứng",
+    "Thạch trắng nhỏ",
+    "Thạch trái cây hồng",
+    "Thạch trái cây hỗn hợp",
+    "Thạch đen",
+    "Thạch cacao",
+    "Trân châu hoàng kim",
+    "Thạch phô mai",
+    "Thạch dừa",
+]
+
+# Lưu lựa chọn topping qua radio/selectbox dạng lưới thu gọn
+selected_topping = st.selectbox("Chọn topping từ 12 ô khay:", topping_options)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -225,8 +226,8 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.write("")
 
-# ----------------- 6. NÚT HOÀN TẤT & GIAO TRÀ -----------------
-if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH"):
+# ----------------- 6. NÚT GIAO TRÀ -----------------
+if st.button("🚀 GIAO LY TRÀ CHO KHÁCH"):
   if (
       selected_tea == cust["tea"]
       and selected_size == cust["size"]
@@ -238,7 +239,7 @@ if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH"):
     earned = cust["price"]
     st.session_state.money += earned
     st.success(f"🎉 Khách rất hài lòng và thưởng cho quán {earned:,.0f} đ!")
-    time.sleep(0.5)
+    time.sleep(0.4)
     st.session_state.current_customer = None
     st.rerun()
   else:
@@ -249,6 +250,6 @@ if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH"):
     st.session_state.reputation = round(
         max(1.0, st.session_state.reputation - 0.1), 1
     )
-    time.sleep(0.5)
+    time.sleep(0.4)
     st.session_state.current_customer = None
     st.rerun()
