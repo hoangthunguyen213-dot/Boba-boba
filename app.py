@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="Tiệm Trà Nhỏ - Boba Master", page_icon="🧋", layout="centered"
 )
 
-# ----------------- CSS GIAO DIỆN GAME MOBILE MÔ PHỎNG -----------------
+# ----------------- CSS GIAO DIỆN GAME MOBILE -----------------
 st.markdown(
     """
     <style>
@@ -87,8 +87,6 @@ def generate_order():
   customers = ["Bé Na 👧", "Minh Quân 👦", "Hà An 👩", "Gia Hân 🌸", "Tuấn Khải ☕"]
   sizes = ["Size M", "Size L"]
   teas = ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong", "Trà thái"]
-
-  # 12 loại topping tương ứng với 12 ô lưới trong ảnh
   toppings = [
       "Trân châu đen",
       "Thạch matcha",
@@ -178,9 +176,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Chia 12 ô topping thành 3 hàng (mỗi hàng 4 ô) cho trực quan y hệt game
-t_col1, t_col2, t_col3, t_col4 = st.columns(4)
-
 topping_options = [
     "Trân châu đen",
     "Thạch matcha",
@@ -196,7 +191,6 @@ topping_options = [
     "Thạch dừa",
 ]
 
-# Lưu lựa chọn topping qua radio/selectbox dạng lưới thu gọn
 selected_topping = st.selectbox("Chọn topping từ 12 ô khay:", topping_options)
 
 st.markdown("</div>", unsafe_allow_html=True)
