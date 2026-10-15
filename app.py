@@ -1,13 +1,13 @@
-import random
+ import random
 import time
 import streamlit as st
 
 # Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="Tiệm Trà Nhỏ - Boba Game Layout", page_icon="🧋", layout="centered"
+    page_title="Tiệm Trà Nhỏ - Boba Game", page_icon="🧋", layout="centered"
 )
 
-# ----------------- TÙY CHỈNH CSS DẠNG LƯỚI GAME MOBILE -----------------
+# ----------------- TÙY CHỈNH CSS -----------------
 st.markdown(
     """
     <style>
@@ -42,13 +42,6 @@ st.markdown(
         font-weight: bold;
         margin-top: 15px;
         margin-bottom: 10px;
-    }
-    /* Khung lưới topping */
-    .topping-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 15px;
     }
     .stButton>button {
         background-color: #e5989b;
@@ -119,6 +112,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Hiển thị hình ảnh minh họa tiệm trà ấm cúng
+st.image(
+    "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1000&auto=format&fit=crop",
+    caption="Góc quầy Tiệm Trà Nhỏ xinh xắn",
+    use_column_width=True,
+)
+
 # ----------------- 2. BONG BÓNG ORDER -----------------
 st.markdown(
     f"""
@@ -143,7 +143,7 @@ with col_t1:
 with col_t2:
   selected_size = st.selectbox("Chọn size ly:", ["Size M", "Size L"])
 
-# ----------------- 4. KHAY TOPPING (DẠNG LƯỚI TRỰC QUAN) -----------------
+# ----------------- 4. KHAY TOPPING -----------------
 st.markdown(
     '<div class="section-title">🍮 2. CHỌN KHAY TOPPING</div>',
     unsafe_allow_html=True,
