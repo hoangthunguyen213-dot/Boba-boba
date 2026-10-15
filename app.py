@@ -4,9 +4,7 @@ import streamlit as st
 
 # Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="Tiệm Trà Nhỏ - Boba Master Game",
-    page_icon="🧋",
-    layout="centered",
+    page_title="Tiệm Trà Nhỏ - Boba Master", page_icon="🧋", layout="centered"
 )
 
 # ----------------- CSS GIAO DIỆN GAME MOBILE CHI TIẾT -----------------
