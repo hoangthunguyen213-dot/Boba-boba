@@ -4,57 +4,71 @@ import streamlit as st
 
 # Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="Tiệm Trà Nhỏ - Boba Game", page_icon="🧋", layout="centered"
+    page_title="Tiệm Trà Nhỏ - Boba Master", page_icon="🧋", layout="centered"
 )
 
-# ----------------- TÙY CHỈNH CSS -----------------
+# ----------------- CSS GIAO DIỆN GAME STYLE XINH XẮN -----------------
 st.markdown(
     """
     <style>
     .stApp {
-        background-color: #fff9f4;
+        background-color: #faf6f0;
         color: #4a3b32;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+    /* Thanh trạng thái game */
     .game-header {
-        background-color: #ffb7b2;
-        padding: 10px 15px;
-        border-radius: 12px;
+        background: linear-gradient(135deg, #ffb7b2, #ff9aa2);
+        padding: 12px 20px;
+        border-radius: 20px;
         font-weight: bold;
-        font-size: 15px;
+        font-size: 16px;
+        color: #fff;
         text-align: center;
-        box-shadow: 0 3px 5px rgba(0,0,0,0.06);
-        margin-bottom: 12px;
+        box-shadow: 0 4px 10px rgba(255, 183, 178, 0.4);
+        margin-bottom: 15px;
     }
+    /* Bong bóng order của khách */
     .customer-bubble {
         background-color: #ffffff;
         border: 3px solid #ffb7b2;
-        padding: 14px;
-        border-radius: 14px;
-        margin-bottom: 15px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        padding: 16px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+    /* Tiêu đề khu vực */
     .section-title {
-        background-color: #e5989b;
+        background-color: #b5838d;
         color: white;
-        padding: 6px 12px;
-        border-radius: 8px;
+        padding: 8px 15px;
+        border-radius: 12px;
         font-size: 14px;
         font-weight: bold;
         margin-top: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+    /* Tùy chỉnh nút bấm */
     .stButton>button {
-        background-color: #e5989b;
+        background: linear-gradient(135deg, #e5989b, #b5838d);
         color: white;
-        border-radius: 10px;
+        border-radius: 15px;
         font-weight: bold;
         border: none;
-        padding: 10px 15px;
+        padding: 12px 20px;
         width: 100%;
+        box-shadow: 0 4px 10px rgba(181, 131, 141, 0.3);
+        transition: 0.2s;
     }
     .stButton>button:hover {
-        background-color: #b5838d;
+        background: linear-gradient(135deg, #b5838d, #6d597a);
         color: white;
+    }
+    /* Khung selectbox và radio */
+    .stSelectbox div[data-baseweb="select"] {
+        border-radius: 12px;
+        border-color: #ffb7b2;
     }
     </style>
 """,
@@ -74,7 +88,13 @@ if "current_customer" not in st.session_state:
 
 # Hàm tạo đơn order ngẫu nhiên
 def generate_order():
-  customers = ["Bé Na", "Minh Quân", "Hà An", "Gia Hân", "Tuấn Khải"]
+  customers = [
+      "Bé Na 👧",
+      "Minh Quân 👦",
+      "Hà An 👩",
+      "Gia Hân 🌸",
+      "Tuấn Khải ☕",
+  ]
   sizes = ["Size M", "Size L"]
   teas = ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong"]
   toppings = [
@@ -106,44 +126,45 @@ cust = st.session_state.current_customer
 st.markdown(
     f"""
 <div class="game-header">
-    📅 Ngày {st.session_state.day} &nbsp;|&nbsp; 💰 {st.session_state.money:,.0f} đ &nbsp;|&nbsp; ⭐ {st.session_state.reputation}
+    📅 Ngày {st.session_state.day} &nbsp;&nbsp;|&nbsp;&nbsp; 💰 {st.session_state.money:,.0f} đ &nbsp;&nbsp;|&nbsp;&nbsp; ⭐ {st.session_state.reputation} / 5.0
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-# ----------------- 2. BONG BÓNG ORDER -----------------
+# ----------------- 2. BONG BÓNG ORDER CỦA KHÁCH -----------------
 st.markdown(
     f"""
 <div class="customer-bubble">
-    <h4 style="margin: 0 0 6px 0; color: #b5838d;">👧 Khách hàng: {cust['name']}</h4>
-    <p style="font-size: 15px; margin: 0;">💬 <i>"Cho tớ 1 ly <b>{cust['tea']}</b> với <b>{cust['size']}</b>, thêm <b>{cust['topping']}</b>, <b>{cust['sugar']}</b> và <b>{cust['ice']}</b> nhé!"</i></p>
+    <h4 style="margin: 0 0 8px 0; color: #b5838d;">🗣️ Khách hàng: {cust['name']}</h4>
+    <p style="font-size: 16px; margin: 0; line-height: 1.5;">💬 <i>"Cho tớ 1 ly <b>{cust['tea']}</b> size <b>{cust['size']}</b>, thêm <b>{cust['topping']}</b>, ngọt <b>{cust['sugar']}</b> và đá <b>{cust['ice']}</b> nhé!"</i></p>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-# ----------------- 3. KHU VỰC VÒI TRÀ & SIZE -----------------
+# ----------------- 3. KHU VỰC PHA CHẾ (VÒI TRÀ & SIZE) -----------------
 st.markdown(
-    '<div class="section-title">🧋 1. HỆ THỐNG VÒI TRÀ & CHỌN SIZE</div>',
+    '<div class="section-title">🧋 1. HỆ THỐNG VÒI TRÀ & CHỌN SIZE LY</div>',
     unsafe_allow_html=True,
 )
 col_t1, col_t2 = st.columns(2)
 with col_t1:
   selected_tea = st.selectbox(
-      "Chọn vòi trà:", ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong"]
+      "Chọn vòi trà cốt:",
+      ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong"],
   )
 with col_t2:
-  selected_size = st.selectbox("Chọn size ly:", ["Size M", "Size L"])
+  selected_size = st.selectbox("Chọn kích thước ly:", ["Size M", "Size L"])
 
 # ----------------- 4. KHAY TOPPING -----------------
 st.markdown(
-    '<div class="section-title">🍮 2. CHỌN KHAY TOPPING</div>',
+    '<div class="section-title">🍮 2. KHU VỰC KHAY TOPPING</div>',
     unsafe_allow_html=True,
 )
 
 selected_topping = st.radio(
-    "Danh mục các khay topping:",
+    "Chọn loại topping cho vào ly:",
     [
         "Trân châu đen",
         "Trân châu hoàng kim",
@@ -156,7 +177,7 @@ selected_topping = st.radio(
 
 # ----------------- 5. ĐƯỜNG & ĐÁ -----------------
 st.markdown(
-    '<div class="section-title">🥛 3. ĐƯỜNG, ĐÁ & FOAM</div>',
+    '<div class="section-title">🥛 3. MỨC ĐƯỜNG & ĐÁ</div>',
     unsafe_allow_html=True,
 )
 col_s1, col_s2 = st.columns(2)
@@ -180,7 +201,9 @@ if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH"):
   ):
     earned = cust["price"]
     st.session_state.money += earned
-    st.success(f"🎉 Khách thưởng {earned:,.0f}đ vì pha cực kỳ chuẩn vị!")
+    st.success(
+        f"🎉 Khách hàng uống rất ngon và thưởng cho quán {earned:,.0f}đ!"
+    )
     time.sleep(0.5)
     st.session_state.current_customer = None
     st.rerun()
