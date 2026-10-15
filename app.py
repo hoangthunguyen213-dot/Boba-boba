@@ -1,4 +1,4 @@
- import random
+import random
 import time
 import streamlit as st
 
@@ -110,13 +110,6 @@ st.markdown(
 </div>
 """,
     unsafe_allow_html=True,
-)
-
-# Hiển thị hình ảnh minh họa tiệm trà ấm cúng
-st.image(
-    "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1000&auto=format&fit=crop",
-    caption="Góc quầy Tiệm Trà Nhỏ xinh xắn",
-    use_column_width=True,
 )
 
 # ----------------- 2. BONG BÓNG ORDER -----------------
