@@ -1,53 +1,61 @@
-import random
+ import random
 import time
 import streamlit as st
 
 # Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="Tiệm Trà Nhỏ - Quầy Pha Chế & Order", page_icon="🍵", layout="wide"
+    page_title="Tiệm Trà Nhỏ - Boba Game Style", page_icon="🧋", layout="wide"
 )
 
-# ----------------- CSS GIAO DIỆN QUÁN TRÀ ẤM CÚNG -----------------
+# ----------------- TÙY CHỈNH CSS GIAO DIỆN GAME MOBILE -----------------
 st.markdown(
     """
     <style>
     .stApp {
-        background-color: #f7f3ed;
+        background-color: #fff9f4;
         color: #4a3b32;
     }
-    .stButton>button {
-        background-color: #8b5a2b;
+    .game-header {
+        background-color: #ffb7b2;
+        padding: 12px 20px;
+        border-radius: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        margin-bottom: 15px;
+    }
+    .customer-bubble {
+        background-color: #ffffff;
+        border: 3px solid #ffb7b2;
+        padding: 16px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    }
+    .section-title {
+        background-color: #e5989b;
         color: white;
-        border-radius: 10px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    .stButton>button {
+        background-color: #e5989b;
+        color: white;
+        border-radius: 12px;
         font-weight: bold;
         border: none;
         padding: 10px 20px;
     }
     .stButton>button:hover {
-        background-color: #6b4226;
+        background-color: #b5838d;
         color: white;
-    }
-    .counter-box {
-        background-color: #fffaf0;
-        border: 3px solid #b5835a;
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-    }
-    .blackboard {
-        background-color: #2b2b2b;
-        color: #f8f8f2;
-        padding: 15px;
-        border-radius: 12px;
-        border: 5px solid #d4a373;
-        font-family: 'Courier New', Courier, monospace;
-    }
-    .order-ticket {
-        background-color: #ffffff;
-        border: 2px dashed #8b5a2b;
-        padding: 15px;
-        border-radius: 10px;
     }
     </style>
 """,
@@ -56,294 +64,162 @@ st.markdown(
 
 # ----------------- KHỞI TẠO TRẠNG THÁI GAME -----------------
 if "money" not in st.session_state:
-  st.session_state.money = 250
-if "reputation" not in st.session_state:
-  st.session_state.reputation = 20
+  st.session_state.money = 856800  # 856,8k như trong game
 if "day" not in st.session_state:
-  st.session_state.day = 1
-
-if "ingredients" not in st.session_state:
-  st.session_state.ingredients = {
-      "Trà ô long": 15,
-      "Trà nhài": 15,
-      "Hồng trà to cọc": 15,
-      "Sữa tươi": 15,
-      "Hạt trân châu": 12,
-      "Thạch trái cây": 12,
-  }
-
-if "upgrades" not in st.session_state:
-  st.session_state.upgrades = {
-      "Bàn ghế gỗ mộc mạc": False,
-      "Đèn vàng ấm áp trang trí": False,
-      "Loa phát nhạc Lofi": False,
-  }
+  st.session_state.day = 28
+if "reputation" not in st.session_state:
+  st.session_state.reputation = 4.7
+if "customers_served" not in st.session_state:
+  st.session_state.customers_served = 142
 
 if "current_customer" not in st.session_state:
   st.session_state.current_customer = None
 
-if "customers_served" not in st.session_state:
-  st.session_state.customers_served = 0
-if "daily_revenue" not in st.session_state:
-  st.session_state.daily_revenue = 0
 
-
-# Hàm tạo khách hàng và order
-def create_new_customer():
-  names = ["An Nhiên", "Minh Trí", "Thảo Nguyên", "Bảo An", "Đăng Khoa", "Hà My"]
-  recipes = [
-      {
-          "drink": "Trà Mộc Truyền Thống",
-          "base": "Trà ô long",
-          "topping": "Không topping",
-          "price": 25,
-      },
-      {
-          "drink": "Trà Ô Long Sữa",
-          "base": "Trà ô long",
-          "topping": "Hạt trân châu",
-          "price": 35,
-      },
-      {
-          "drink": "Trà Nhài Thạch",
-          "base": "Trà nhài",
-          "topping": "Thạch trái cây",
-          "price": 25,
-      },
-      {
-          "drink": "Trân Trái Cây Tươi",
-          "base": "Hồng trà to cọc",
-          "topping": "Thạch trái cây",
-          "price": 55,
-      },
+# Hàm tạo khách hàng và order ngẫu nhiên chuẩn game
+def generate_order():
+  customers = ["Bé Na", "Minh Quân", "Hà An", "Gia Hân", "Tuấn Khải", "Phương Linh"]
+  sizes = ["Size M", "Size L"]
+  teas = ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong", "Trà hoa"]
+  toppings = [
+      "Trân châu đen",
+      "Trân châu hoàng kim",
+      "Thạch phô mai",
+      "Thạch trái cây",
+      "Pudding trứng",
   ]
-
-  chosen = random.choice(recipes)
-  price = chosen["price"]
-
-  if st.session_state.upgrades["Bàn ghế gỗ mộc mạc"]:
-    price += 5
+  sugars = ["0% đường", "50% đường", "100% đường"]
+  ices = ["Không đá", "Ít đá", "Đá bình thường"]
 
   st.session_state.current_customer = {
-      "name": random.choice(names),
-      "drink": chosen["drink"],
-      "base": chosen["base"],
-      "topping": chosen["topping"],
-      "price": price,
+      "name": random.choice(customers),
+      "size": random.choice(sizes),
+      "tea": random.choice(teas),
+      "topping": random.choice(toppings),
+      "sugar": random.choice(sugars),
+      "ice": random.choice(ices),
+      "price": random.randint(35000, 65000),
   }
 
 
 if st.session_state.current_customer is None:
-  create_new_customer()
+  generate_order()
 
-# ----------------- TIÊU ĐỀ & CHỈ SỐ QUẢN LÝ -----------------
-st.title("🍵 TIỆM TRÀ NHỎ - QUẦY ORDER & PHA CHẾ")
+# ----------------- 1. THANH TRẠNG THÁI TRÊN CÙNG (HEADER) -----------------
 st.markdown(
-    "*Nhân viên ghi order tiếp khách phía trước, bàn pha chế đầy ắp nguyên liệu"
-    " phía sau sẵn sàng phục vụ!*"
-)
-
-col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-col_m1.metric("💰 Ngân sách", f"${st.session_state.money}")
-col_m2.metric("⭐ Điểm yêu thích", f"{st.session_state.reputation}")
-col_m3.metric("📅 Thời gian", f"Ngày {st.session_state.day}")
-col_m4.metric("🍵 Trà đã bán", f"{st.session_state.customers_served} ly")
-
-st.divider()
-
-# ----------------- MÔ PHỎNG KHU VỰC QUẦY TRỰC QUAN -----------------
-st.markdown("### 🏪 Sơ Đồ Không Gian Quán")
-col_counter1, col_counter2 = st.columns(2)
-
-with col_counter1:
-  st.markdown(
-      """
-    <div class="counter-box">
-        <h4 style="color: #8b5a2b; margin-top: 0;">🙋‍♀️ 1. Khu Vực Nhân Viên Order & Khách Hàng</h4>
-        <p>👋 <b>Nhân viên đang đứng ghi order:</b> Tiếp chuyện vị khách đang xem thực đơn bảng đen, nhận đơn và chuyển yêu cầu vào bên trong quầy.</p>
-    </div>
-    """,
-      unsafe_allow_html=True,
-  )
-
-with col_counter2:
-  st.markdown(
-      """
-    <div class="counter-box">
-        <h4 style="color: #8b5a2b; margin-top: 0;">🫖 2. Khu Vực Bàn Pha Chế (Bar Station)</h4>
-        <p>✨ <b>Bàn pha chế chính:</b> Nơi trưng bày các hũ đựng nguyên liệu (Trà ô long, Hồng trà, Sữa tươi, Trân châu, Thạch) và máy lắc Shaker để pha chế.</p>
-    </div>
-    """,
-      unsafe_allow_html=True,
-  )
-
-# BẢNG ĐEN THỰC ĐƠN
-st.markdown(
-    """
-<div class="blackboard">
-    <h3 style="text-align: center; color: #f8c291; margin-top: 0;">📋 THỰC ĐƠN BẢNG ĐEN TIỆM TRÀ NHỎ</h3>
-    <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-        <div>🍃 <b>Trà Mộc Truyền Thống</b> ($25)<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>Cốt: Trà ô long</i></div>
-        <div>🧋 <b>Trà Ô Long Sữa</b> ($35)<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>Cốt: Trà ô long + Hạt trân châu</i></div>
-    </div>
-    <br>
-    <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-        <div>🌸 <b>Trà Nhài Thạch</b> ($25)<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>Cốt: Trà nhài + Thạch trái cây</i></div>
-        <div>🍓 <b>Trân Trái Cây Tươi</b> ($55)<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>Cốt: Hồng trà to cọc + Thạch trái cây</i></div>
-    </div>
+    f"""
+<div class="game-header">
+    <span>📅 Ngày {st.session_state.day}</span>
+    <span>💰 {st.session_state.money:,.0f} đ</span>
+    <span>⭐ {st.session_state.reputation} (581 đánh giá)</span>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
+# ----------------- 2. BONG BÓNG ORDER CỦA KHÁCH HÀNG -----------------
+cust = st.session_state.current_customer
+st.markdown(
+    f"""
+<div class="customer-bubble">
+    <h4 style="margin: 0 0 8px 0; color: #b5838d;">👧 Khách hàng: {cust['name']}</h4>
+    <p style="font-size: 16px; margin: 0;">💬 <i>"Cho tớ 1 ly <b>{cust['tea']}</b> với <b>{cust['size']}</b>, thêm <b>{cust['topping']}</b>, <b>{cust['sugar']}</b> và <b>{cust['ice']}</b> nhé!"</i></p>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+st.divider()
+
+# ----------------- 3. QUẦY TRÀ & CHỌN SIZE -----------------
+st.markdown(
+    '<div class="section-title">🧋 1. QUẦY TRÀ & CHỌN SIZE LY</div>',
+    unsafe_allow_html=True,
+)
+
+col_tea, col_size = st.columns([2, 1])
+
+with col_tea:
+  selected_tea = st.selectbox(
+      "Chọn vòi trà (Hệ thống vòi rót):",
+      ["Trà sữa", "Matcha", "Hồng trà", "Lục trà", "Oolong", "Trà hoa"],
+  )
+
+with col_size:
+  selected_size = st.selectbox("Chọn kích thước ly:", ["Size M", "Size L"])
+
+# ----------------- 4. KHAY TOPPING (LƯỚI CHỌN TOPPING) -----------------
+st.markdown(
+    '<div class="section-title">🍮 2. KHAY TOPPING (CHỌN TOPPING)</div>',
+    unsafe_allow_html=True,
+)
+
+selected_topping = st.selectbox(
+    "Chọn Topping:",
+    [
+        "Trân châu đen",
+        "Trân châu hoàng kim",
+        "Trân châu trắng",
+        "Thạch trái cây",
+        "Thạch phô mai",
+        "Thạch matcha",
+        "Thạch dừa",
+        "Pudding trứng",
+        "Hạt nổ cam",
+        "Hạt nổ việt quất",
+        "Sương sáo",
+        "Đậu đỏ",
+    ],
+)
+
+# ----------------- 5. ĐƯỜNG, ĐÁ & FOAM -----------------
+st.markdown(
+    '<div class="section-title">🥛 3. ĐƯỜNG, ĐÁ & FOAM</div>',
+    unsafe_allow_html=True,
+)
+
+col_f1, col_f2, col_f3 = st.columns(3)
+with col_f1:
+  selected_sugar = st.selectbox(
+      "Mức đường:", ["0% đường", "50% đường", "100% đường"]
+  )
+with col_f2:
+  selected_ice = st.selectbox("Mức đá:", ["Không đá", "Ít đá", "Đá bình thường"])
+with col_f3:
+  selected_foam = st.selectbox(
+      "Lớp phủ / Foam:", ["Không", "Foam matcha", "Kem cheese"]
+  )
+
 st.write("")
 
-# ----------------- KHU VỰC THAO TÁC PHA CHẾ & KHO -----------------
-left_col, right_col = st.columns([1.2, 0.8])
-
-with left_col:
-  st.subheader("🥤 Thao Tác Tại Bàn Pha Chế")
-
-  customer = st.session_state.current_customer
-  if customer:
-    st.markdown(
-        f"""
-        <div class="order-ticket">
-            <h4>🔔 Đơn Order từ Nhân Viên: Khách <b>{customer['name']}</b></h4>
-            <p>👉 <b>Món gọi:</b> {customer['drink']}</p>
-            <p>📝 <i>Công thức tại bàn pha chế:</i> Cốt trà: <b>{customer['base']}</b> | Topping: <b>{customer['topping']}</b></p>
-            <p>💵 <b>Tiền thưởng:</b> ${customer['price']}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+# ----------------- 6. NÚT HOÀN TẤT & GIAO HÀNG -----------------
+if st.button("🚀 HOÀN TẤT & GIAO LY TRÀ CHO KHÁCH", use_container_width=True):
+  # Kiểm tra độ chính xác so với đơn order của khách
+  if (
+      selected_tea == cust["tea"]
+      and selected_size == cust["size"]
+      and selected_topping == cust["topping"]
+      and selected_sugar == cust["sugar"]
+      and selected_ice == cust["ice"]
+  ):
+    earned = cust["price"]
+    st.session_state.money += earned
+    st.session_state.customers_served += 1
+    st.success(
+        f"🎉 Tuyệt vời! Khách hàng uống rất ngon và thưởng cho quán"
+        f" {earned:,.0f}đ!"
     )
-
-    st.write("")
-    st.write("### 🫖 Chọn nguyên liệu trên bàn pha chế:")
-
-    selected_base = st.selectbox(
-        "Chọn Cốt Trà:",
-        [
-            "-- Chọn cốt trà --",
-            "Trà ô long",
-            "Trà nhài",
-            "Hồng trà to cọc",
-            "Sữa tươi",
-        ],
+    time.sleep(0.4)
+    st.session_state.current_customer = None
+    st.rerun()
+  else:
+    st.error(
+        "❌ Pha chưa đúng ý khách rồi! Khách hàng không hài lòng và bỏ đi... (-0.1"
+        " sao uy tín)"
     )
-    selected_topping = st.selectbox(
-        "Chọn Topping từ hũ:",
-        [
-            "-- Chọn topping --",
-            "Hạt trân châu",
-            "Thạch trái cây",
-            "Không topping",
-        ],
+    st.session_state.reputation = round(
+        max(1.0, st.session_state.reputation - 0.1), 1
     )
-
-    if st.button("✨ Lắc shaker & Giao trà cho khách", use_container_width=True):
-      if (
-          selected_base == "-- Chọn cốt trà --"
-          or selected_topping == "-- Chọn topping --"
-      ):
-        st.warning(
-            "⚠️ Cậu hãy chọn đúng cốt trà và topping theo đơn order nhé!"
-        )
-      else:
-        has_base = st.session_state.ingredients.get(selected_base, 0) > 0
-        has_top = True
-        if selected_topping != "Không topping":
-          has_top = st.session_state.ingredients.get(selected_topping, 0) > 0
-
-        if not has_base or not has_top:
-          st.error(
-              "❌ Nguyên liệu trên bàn pha chế đã cạn! Hãy sang mục Nhập Kho"
-              " bên phải lấy thêm."
-          )
-        else:
-          if (
-              selected_base == customer["base"]
-              and selected_topping == customer["topping"]
-          ):
-            st.session_state.ingredients[selected_base] -= 1
-            if selected_topping != "Không topping":
-              st.session_state.ingredients[selected_topping] -= 1
-
-            earned = customer["price"]
-            st.session_state.money += earned
-            st.session_state.reputation += 2
-            st.session_state.customers_served += 1
-            st.session_state.daily_revenue += earned
-
-            st.success(
-                f"🎉 Pha chế thành công! Khách hàng nhận ly trà và trả"
-                f" ${earned}."
-            )
-            time.sleep(0.3)
-            st.session_state.current_customer = None
-            st.rerun()
-          else:
-            st.session_state.reputation = max(
-                0, st.session_state.reputation - 3
-            )
-            st.error(
-                "❌ Pha sai công thức khiến khách hàng không hài lòng! (-3 điểm"
-                " yêu thích)"
-            )
-            time.sleep(0.3)
-            st.session_state.current_customer = None
-            st.rerun()
-
-with right_col:
-  st.subheader("📦 Kho Hàng & Nâng Cấp Quán")
-
-  tab1, tab2 = st.tabs(["🛒 Nhập Nguyên Liệu", "🪵 Trang Trí Tiệm"])
-
-  with tab1:
-    st.write("Kệ nguyên liệu dự trữ:")
-    for item, count in st.session_state.ingredients.items():
-      col_i1, col_i2 = st.columns([2, 1])
-      col_i1.write(f"- {item}: **{count}** phần")
-      if col_i2.button(f"Mua (+5) [$10]", key=f"buy_{item}"):
-        if st.session_state.money >= 10:
-          st.session_state.money -= 10
-          st.session_state.ingredients[item] += 5
-          st.success(f"Đã nhập 5 phần {item}!")
-          st.rerun()
-        else:
-          st.error("Không đủ tiền vốn để nhập kho!")
-
-  with tab2:
-    st.write("Nâng cấp không gian tiệm trà:")
-    upgrade_list = {
-        "Bàn ghế gỗ mộc mạc": 100,
-        "Đèn vàng ấm áp trang trí": 150,
-        "Loa phát nhạc Lofi": 200,
-    }
-
-    for up_name, is_unlocked in st.session_state.upgrades.items():
-      cost = upgrade_list[up_name]
-      if is_unlocked:
-        st.success(f"✅ {up_name} (Đã sở hữu)")
-      else:
-        if st.button(f"Sắm {up_name} (${cost})", key=f"up_{up_name}"):
-          if st.session_state.money >= cost:
-            st.session_state.money -= cost
-            st.session_state.upgrades[up_name] = True
-            st.success(f"Đã trang bị {up_name} thành công!")
-            st.rerun()
-          else:
-            st.error("Ví tiền không đủ!")
-
-  st.divider()
-  if st.button("🌙 Kết thúc ngày kinh doanh", use_container_width=True):
-    st.session_state.day += 1
-    st.balloons()
-    st.info(
-        f"📊 **Báo cáo Ngày {st.session_state.day - 1}:**\n- Số ly trà đã bán:"
-        f" {st.session_state.customers_served} ly\n- Tổng doanh thu:"
-        f" ${st.session_state.daily_revenue}"
-    )
-    st.session_state.customers_served = 0
-    st.session_state.daily_revenue = 0
+    time.sleep(0.4)
+    st.session_state.current_customer = None
     st.rerun()
